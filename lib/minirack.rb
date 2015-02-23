@@ -48,7 +48,7 @@ module Minirack
 	end
 
 	class App
-		def initialize(&block)
+		def initialize(&block) # &-prefix allows to have block as param
 			instance_eval(&block) if block_given?
 		end
 
