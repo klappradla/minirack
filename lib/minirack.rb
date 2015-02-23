@@ -6,7 +6,7 @@ module Minirack
 
 		def initialize(args)
 			@options = default_options
-			@options[:file] = args[0] if args[0]
+			@options[:file] = args[0] || "default.mru"
 			@app = build_app
 		end
 
@@ -26,8 +26,7 @@ module Minirack
 			{
 				host: "localhost",
 				port: "9292",
-				environment: "development",
-				file: "default.mru"
+				environment: "development"
 			}
 		end
 
