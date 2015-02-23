@@ -6,7 +6,7 @@ module Minirack
 
 		def initialize(args)
 			@options = default_options
-			@options[:file] = args[0]
+			@options[:file] = args[0] if args[0]
 			@app = build_app
 		end
 
@@ -15,9 +15,7 @@ module Minirack
 		end
 
 		def start
-			host = @options[:host]
-			port = @options[:port]
-			args = [host, port, @app]
+			args = [@options[:host], @options[:port], @app]
 			server = ::Thin::Server.new(*args) # "*"turns args into array
 			server.start
 		end
@@ -28,40 +26,40 @@ module Minirack
 			{
 				host: "localhost",
 				port: "9292",
-				environment: "development"
+				environment: "development",
+				file: "default.mru"
 			}
 		end
 
 		def build_app
-			Minirack::Builder.parse_file(@options[:file])
+			Minirack::AppBuilder.parse_file(@options[:file])
 		end
-
 	end
 
-
-	class Builder
-
-		def self.parse_file(file)
-			content = File.read(file)
-			build_content(content)
+	class AppBuilder
+		def self.parse_file(file_path)
+			content = IO.read(file_path)
+			build(content)
 		end
 
-		def self.build_content(build_string)
-			eval "Minirack::Builder.new { \n" + build_string + "\n}.to_app"
+		def self.build(proc_string)
+			eval "Minirack::App.new { \n" + proc_string + "\n}.to_app"			
 		end
+	end
 
+	class App
 		def initialize(&block)
 			instance_eval(&block) if block_given?
 		end
 
 		def to_app
-			@run
+			@app # set instance variable app
 		end
 
 		def run(app)
-			@run = app
+			@app = app # return app
 		end
-
+		
 	end
 end
 

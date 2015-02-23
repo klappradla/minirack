@@ -1,0 +1,1 @@
+run Proc.new{ |env| [ "200", {"Content-Type" => "text/html"}, ["<h3>Hello</h3><p>I'm a different application!</p>"] ] }
